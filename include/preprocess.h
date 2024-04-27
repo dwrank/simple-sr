@@ -30,14 +30,14 @@ inline void compute_interpolation_values(
 
 // from tensorflow/lite/kernels/internal/reference/resize_bilinear.h ResizeBilinear
 template <typename T>
-inline void resize_bilinear(Tensor2<T> &in_t,
-                            Tensor2<T> &out_t,
+inline void resize_bilinear(Tensor<T> &in_t,
+                            Tensor<T> &out_t,
                             bool align_corners=false)
 {
-    int input_height = in_t.rows;
-    int input_width = in_t.cols;
-    int output_height = out_t.rows;
-    int output_width = out_t.cols;
+    int input_height = in_t.rows();
+    int input_width = in_t.cols();
+    int output_height = out_t.rows();
+    int output_width = out_t.cols();
 
     //printf("shape: %d %d, %d %d\n", input_height, input_width, output_height, output_width);
     // If half_pixel_centers is True, align_corners must be False.
@@ -69,20 +69,20 @@ inline void resize_bilinear(Tensor2<T> &in_t,
                                        input_width, &input_x, &x0, &x1);
 
             T interpolation = static_cast<T>(
-                    *in_t.Data(y0, x0) * (1 - (input_y - y0)) * (1 - (input_x - x0)) +
-                    *in_t.Data(y1, x0) * (input_y - y0) * (1 - (input_x - x0)) +
-                    *in_t.Data(y0, x1) * (1 - (input_y - y0)) * (input_x - x0) +
-                    *in_t.Data(y1, x1) * (input_y - y0) * (input_x - x0) +
+                    in_t(y0, x0) * (1 - (input_y - y0)) * (1 - (input_x - x0)) +
+                    in_t(y1, x0) * (input_y - y0) * (1 - (input_x - x0)) +
+                    in_t(y0, x1) * (1 - (input_y - y0)) * (input_x - x0) +
+                    in_t(y1, x1) * (input_y - y0) * (input_x - x0) +
                     rounding_offset);
 
             //if (y == 0 && x < 10) printf("Interp: %f %d %d, %f %d %d\n", input_y, y0, y1, input_x, x0, x1);
-            *out_t.Data(y, x) = interpolation;
+            out_t(y, x) = interpolation;
       }
     }
 }
 
 template<typename T>
-inline Tensor2<T> resize_tensor2(Tensor2<T> &in_t, int height, int width)
+inline Tensor2f resize_tensor2(Tensor<T> &in_t, int height, int width)
 {
     auto out_t = Tensor2f(height, width);
 
@@ -92,12 +92,12 @@ inline Tensor2<T> resize_tensor2(Tensor2<T> &in_t, int height, int width)
 }
 
 template<typename T>
-inline Tensor2f normalize_tensor2(Tensor2<T> &in_t, double mean, double std)
+inline Tensor2f normalize_tensor2(Tensor<T> &in_t, double mean, double std)
 {
-    auto out_t = Tensor2f(in_t.rows, in_t.cols);
+    auto out_t = Tensor2f(in_t.rows(), in_t.cols());
 
-    for (int i = 0; i < in_t.length; i++) {
-        out_t.data[i] = (static_cast<double>(in_t.data[i]) - mean) / std;
+    for (int i = 0; i < in_t.length(); i++) {
+        out_t[i] = (static_cast<double>(in_t[i]) - mean) / std;
     }
 
     return out_t;

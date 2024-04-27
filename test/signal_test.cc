@@ -11,11 +11,11 @@
 static void print_data(const char *name, Tensor2f &t)
 {
     printf("\n%s", name);
-    for (int i = 0; i < t.cols; i++) {
+    for (int i = 0; i < t.cols(); i++) {
         if (i % 16 == 0) {
             printf("\n");
         }
-        printf("%f ", *t.Data(0, i));
+        printf("%f ", t(0, i));
     }
     putchar('\n');
 }

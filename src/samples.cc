@@ -3,22 +3,9 @@
 #include <algorithm>
 #include <random>
 
-#include "utils.h"
+#include "samples.h"
 #include "signal.h"
 #include "preprocess.h"
-
-// HERE remove this!!!
-static void print_data(float *data)
-{
-    printf("\nUtil Train");
-    for (int i = 0; i < 32; i++) {
-        if (i % 16 == 0) {
-            printf("\n");
-        }
-        printf("%f ", data[i]);
-    }
-    putchar('\n');
-}
 
 static bool is_dir(const dirent *dir)
 {
@@ -52,6 +39,7 @@ std::vector<Tensor1s> get_audio_samples(const char *data_dir)
     struct dirent *dir;
 
     std::vector<Tensor1s> samples;
+
     std::stringstream ss;
 
     if (d) {
@@ -64,9 +52,9 @@ std::vector<Tensor1s> get_audio_samples(const char *data_dir)
 
                 // read the wav file
                 int frames;
-                auto wav_tensor = read_wavfile(ss.str().c_str(), frames);
-                if (!wav_tensor.is_empty()) {
-                    samples.push_back(wav_tensor);
+                auto wav = read_wavfile(ss.str().c_str(), frames);
+                if (!wav.is_empty()) {
+                    samples.push_back(wav);
                 }
             }
         }

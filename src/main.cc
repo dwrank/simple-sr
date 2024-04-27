@@ -12,18 +12,6 @@
 #define FRAME_LEN 256
 #define FRAME_STEP 128
 
-static void print_data(float *data, int len)
-{
-    printf("\nTrain");
-    for (int i = 0; i < len; i++) {
-        if (i % 16 == 0) {
-            printf("\n");
-        }
-        printf("%f ", data[i]);
-    }
-    putchar('\n');
-}
-
 int main(int argc, char **argv)
 {
     char *fn_in = 0, *fn_out = 0;
@@ -51,6 +39,13 @@ int main(int argc, char **argv)
     // Spectrogram test - add an option for this
     const char *wav_file = "../data/h_yes.wav";
     //const char *wav_file = "/Users/drank/dev/ml/python/audio/data/mini_speech_commands/right/988e2f9a_nohash_0.wav";
+
+    int frames;
+    auto wav = read_wavfile(wav_file, frames);
+    if (!wav.is_empty()) {
+        print_data(wav);
+    }
+    wav.free();
     spectrogram_test(wav_file);
 
 #if 0

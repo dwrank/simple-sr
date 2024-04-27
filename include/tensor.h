@@ -2,30 +2,37 @@
 #define __TENSOR_H__
 
 #include <stdio.h>
+#include <array>
+#include <vector>
+#include <memory>
 
-// 2-D tensor
+// 4-D tensor
 template<typename T>
-class Tensor2
+class Tensor
 {
 public:
-    Tensor2() :
+    Tensor() :
         data(nullptr)
     {
         this->free();
     }
 
-    Tensor2(int r, int c)
+    Tensor(int d0, int d1, int d2, int d3)
     {
-        alloc(r, c);
+        alloc(d0, d1, d2, d3);
     }
 
-    virtual ~Tensor2() { }//free(); }
+    Tensor(int d1, int d2, int d3) : Tensor(1, d1, d2, d3) {}
+    Tensor(int rows, int cols) : Tensor(1, rows, cols) {}
+    Tensor(int length) : Tensor(1, 1, length) {}
 
-    void free()
+    virtual ~Tensor() {}
+
+    inline void free()
     {
-        rows = 0;
-        cols = 0;
-        length = 0;
+        std::fill(dims.begin(), dims.end(), 0);
+        n_dims = 0;
+        len = 0;
 
         if (data != nullptr) {
             delete[] data;
@@ -33,64 +40,164 @@ public:
         }
     }
 
-    inline void alloc(int r, int c)
+    inline void alloc(int d0, int d1, int d2, int d3)
     {
-        rows = r;
-        cols = c;
-        length = rows * cols;
-        data = new T[length]();
+        dims[0] = d0;
+        dims[1] = d1;
+        dims[2] = d2;
+        dims[3] = d3;
+        len = d0 * d1 * d2 *d3;
+
+        n_dims = 0;
+        if (d3) { n_dims++; }
+        if (d2 > 1) { n_dims++; }
+        if (d1 > 1) { n_dims++; }
+        if (d0 > 1) { n_dims++; }
+
+        data = new T[len]();
+    }
+
+    inline void alloc(int d1, int d2, int d3)
+    {
+        alloc(1, d1, d2, d3);
+    }
+
+    inline void alloc(int rows, int cols)
+    {
+        alloc(1, 1, rows, cols);
     }
 
     inline void alloc(int length)
     {
-        alloc(1, length);
+        alloc(1, 1, 1, length);
     }
 
-    inline void realloc(int r, int c)
+    inline void realloc(int d0, int d1, int d2, int d3)
     {
         this->free();
-        alloc(r, c);
+        alloc(d0, d1, d2, d3);
+    }
+
+    inline void realloc(int d1, int d2, int d3)
+    {
+        realloc(1, d1, d2, d3);
+    }
+
+    inline void realloc(int rows, int cols)
+    {
+        realloc(1, 1, rows, cols);
     }
 
     inline void realloc(int length)
     {
-        this->free();
-        alloc(length);
+        realloc(1, 1, 1, length);
     }
 
-    inline T* Data(int row, int col)
+    inline const T& operator()(int i0, int i1, int i2, int i3) const
     {
-        int i = row * cols + col;
-        if (i >= length) {
-            fprintf(stderr, "Tensor: Index out of bounds: %d. Length is %d.\n", i, length);
-            i = length - 1;
+        // group_size = dims[1] * dims[2] * dims[3];
+        // channel_size = dims[2] * dims[3];
+        // row_size = dims[3];
+        // col_size = 1;
+        // pos = group_size * i0 + channel_size * i1 + row_size * i2 + col_size * i3;
+        // pos = (dims[1] * dims[2] * dims[3]) * i0 + (dims[2] * dims[3]) * i1 +
+        //       (dims[3]) * i2 + (1) * i3;
+        // pos = dims[3] * (dims[2] * (dims[1] * i0 + i1) + i2) + i3;
+        
+        int pos = dims[3] * (dims[2] * (dims[1] * i0 + i1) + i2) + i3;
+
+        if (pos >= len) {
+            fprintf(stderr, "Tensor: Index is out of bounds: %d. Length is %d.\n", pos, len);
+            pos = len - 1;
         }
-        return data + i;
+        return data[pos];
+    }
+
+    inline T& operator()(int i0, int i1, int i2, int i3)
+    {
+        int pos = dims[3] * (dims[2] * (dims[1] * i0 + i1) + i2) + i3;
+
+        if (pos >= len) {
+            fprintf(stderr, "Tensor: Index is out of bounds: %d. Length is %d.\n", pos, len);
+            pos = len - 1;
+        }
+        return data[pos];
+    }
+
+    inline const T& operator()(int i1, int i2, int i3) const
+    {
+        return (*this)(0, i1, i2, i3);
+    }
+
+    inline T& operator()(int i1, int i2, int i3)
+    {
+        return (*this)(0, i1, i2, i3);
+    }
+
+    inline const T& operator()(int row, int col) const
+    {
+        return (*this)(0, 0, row, col);
+    }
+
+    inline T& operator()(int row, int col)
+    {
+        return (*this)(0, 0, row, col);
+    }
+
+    inline const T& operator()(int i) const
+    {
+        return (*this)(0, 0, 0, i);
+    }
+
+    inline T& operator()(int i)
+    {
+        return (*this)(0, 0, 0, i);
+    }
+
+    inline const T& operator[](int i) const
+    {
+        return (*this)(0, 0, 0, i);
+    }
+
+    inline T& operator[](int i)
+    {
+        return (*this)(0, 0, 0, i);
     }
 
     inline bool is_empty() { return data == nullptr; }
 
-    int rows;
-    int cols;
-    int length;
+    inline int d0() { return dims[0]; }
+    inline int d1() { return dims[1]; }
+    inline int d2() { return dims[2]; }
+    inline int d3() { return dims[3]; }
+
+    inline int groups() { return d0(); }
+    inline int channels() { return d1(); }
+    inline int rows() { return d2(); }
+    inline int cols() { return d3(); }
+
+    inline int length() { return len; }
+
     T *data;
+
+private:
+    int len;
+    int n_dims;
+    std::array<int,4> dims;
 };
 
 template<typename T>
-class Tensor1 : public Tensor2<T>
+inline void free_vec_tensor(std::vector<Tensor<T>> &vec)
 {
-public:
-    Tensor1() : Tensor2<T>() {}
+    for (auto &t : vec) {
+        t.free();
+    }
+}
 
-    Tensor1(int length) :
-        Tensor2<T>(1, length)
-    {}
-
-    virtual ~Tensor1() {}
-};
-
-using Tensor1s = Tensor1<short>;
-using Tensor1f = Tensor1<float>;
-using Tensor2f = Tensor2<float>;
+using Tensor1s = Tensor<short>;
+using Tensor1f = Tensor<float>;
+using Tensor2f = Tensor<float>;
+using Tensor3f = Tensor<float>;
+using Tensor4f = Tensor<float>;
 
 #endif //__TENSOR_H__

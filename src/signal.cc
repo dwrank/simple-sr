@@ -11,11 +11,12 @@
 // T[] for unique_ptr is supported since C++11.
 // make_unique for arrays is available since C++14.
 // T[] for shared_ptr is supported since C++17.
+
 Tensor1s read_wavfile(const char *fname, int &frames)
 {
-    Tensor1s tensor;
     SndfileHandle file(fname);
 
+    Tensor1s tensor;
     frames = (int)file.frames();
 
     //printf("wav file: %s, sample rate: %d, channels: %d, format: %d, frames: %d\n",
@@ -24,6 +25,7 @@ Tensor1s read_wavfile(const char *fname, int &frames)
 
     if (!(file.format() & SF_FORMAT_PCM_16)) {
         printf ("Must be in PCM 16 format.\n") ;
+        return false;
     }
     else {
         tensor.alloc(frames);
@@ -95,7 +97,7 @@ Tensor2f get_spectrogram(const float *signal, int signal_len, int frame_len, int
         // store the rfft values
         for (int i = 0; i < rfft_len; i++) {
             // get the absolute value of the complex number
-            *spec.Data(chunk, i) = std::sqrt(std::pow(out[i][0], 2) + std::pow(out[i][1], 2));
+            spec(chunk, i) = std::sqrt(std::pow(out[i][0], 2) + std::pow(out[i][1], 2));
             if (chunk <= 1) {
                 //printf("%d 0x%x: %f %f\n", chunk*spec->rows()+i, (long)data, *data, std::sqrt(std::pow(out[i][0], 2) + std::pow(out[i][1], 2)));
             }
