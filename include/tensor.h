@@ -5,6 +5,8 @@
 #include <array>
 #include <vector>
 #include <memory>
+#include <sstream>
+#include <stdexcept>
 
 // 4-D tensor
 template<typename T>
@@ -42,18 +44,7 @@ public:
 
     inline void alloc(int d0, int d1, int d2, int d3)
     {
-        dims[0] = d0;
-        dims[1] = d1;
-        dims[2] = d2;
-        dims[3] = d3;
-        len = d0 * d1 * d2 *d3;
-
-        n_dims = 0;
-        if (d3) { n_dims++; }
-        if (d2 > 1) { n_dims++; }
-        if (d1 > 1) { n_dims++; }
-        if (d0 > 1) { n_dims++; }
-
+        set_dims(d0, d1, d2, d3);
         data = new T[len]();
     }
 
@@ -107,8 +98,11 @@ public:
         int pos = dims[3] * (dims[2] * (dims[1] * i0 + i1) + i2) + i3;
 
         if (pos >= len) {
-            fprintf(stderr, "Tensor: Index is out of bounds: %d. Length is %d.\n", pos, len);
-            pos = len - 1;
+            //fprintf(stderr, "Tensor: Index is out of bounds: %d. Length is %d.\n", pos, len);
+            //pos = len - 1;
+            std::stringstream ss;
+            ss << "Tensor: Index is out of bounds: " << pos << ". Length is " << len << ".";
+            throw std::runtime_error(ss.str());
         }
         return data[pos];
     }
@@ -118,8 +112,11 @@ public:
         int pos = dims[3] * (dims[2] * (dims[1] * i0 + i1) + i2) + i3;
 
         if (pos >= len) {
-            fprintf(stderr, "Tensor: Index is out of bounds: %d. Length is %d.\n", pos, len);
-            pos = len - 1;
+            //fprintf(stderr, "Tensor: Index is out of bounds: %d. Length is %d.\n", pos, len);
+            //pos = len - 1;
+            std::stringstream ss;
+            ss << "Tensor: Index is out of bounds: " << pos << ". Length is " << len << ".";
+            throw std::runtime_error(ss.str());
         }
         return data[pos];
     }
@@ -164,19 +161,39 @@ public:
         return (*this)(0, 0, 0, i);
     }
 
-    inline bool is_empty() { return data == nullptr; }
+    inline bool is_empty() const { return data == nullptr; }
 
-    inline int d0() { return dims[0]; }
-    inline int d1() { return dims[1]; }
-    inline int d2() { return dims[2]; }
-    inline int d3() { return dims[3]; }
+    inline int d0() const { return dims[0]; }
+    inline int d1() const { return dims[1]; }
+    inline int d2() const { return dims[2]; }
+    inline int d3() const { return dims[3]; }
 
-    inline int groups() { return d0(); }
-    inline int channels() { return d1(); }
-    inline int rows() { return d2(); }
-    inline int cols() { return d3(); }
+    inline int groups() const { return d0(); }
+    inline int channels() const { return d1(); }
+    inline int rows() const { return d2(); }
+    inline int cols() const { return d3(); }
 
-    inline int length() { return len; }
+    inline int length() const { return len; }
+
+    inline void set_dims(int d0, int d1, int d2, int d3)
+    {
+        dims[0] = d0;
+        dims[1] = d1;
+        dims[2] = d2;
+        dims[3] = d3;
+        len = d0 * d1 * d2 *d3;
+
+        n_dims = 0;
+        if (d3) { n_dims++; }
+        if (d2 > 1) { n_dims++; }
+        if (d1 > 1) { n_dims++; }
+        if (d0 > 1) { n_dims++; }
+    }
+
+    inline void print_dims(const char *name="") const
+    {
+        printf("[Tensor] %s dims: (%d, %d, %d, %d) = %d\n", name, d0(), d1(), d2(), d3(), len);
+    }
 
     T *data;
 

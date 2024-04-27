@@ -6,11 +6,11 @@
 #include "tensor.h"
 
 template<typename T>
-void print_data(Tensor<T> &tensor)
+void print_data(const char *name, Tensor<T> &tensor)
 {
-    int len = std::min(tensor.length(), 32);
+    int len = std::min(tensor.length(), 129);
 
-    printf("\nTrain");
+    printf("\n%s", name);
     for (int i = 0; i < len; i++) {
         if (i % 16 == 0) {
             std::cout << std::endl;

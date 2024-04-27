@@ -17,9 +17,9 @@ include_directories (
 
 add_executable (test
     src/main.cc
+    src/weights.cc
     src/signal.cc
     src/samples.cc
-    src/conv2d.cc
     test/signal_test.cc
 )
 
