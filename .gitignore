@@ -2,3 +2,6 @@
 *~
 *.swp
 build
+cscope.files
+cscope.out
+tags
