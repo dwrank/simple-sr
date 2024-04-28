@@ -17,12 +17,12 @@ void print_label(const Tensor<T> &t)
 
     printf("\n[Prediction]\n");
 
-    for (int i = 1; i < t.length(); i++) {
+    for (int i = 0; i < t.length(); i++) {
         printf("%-12s", labels[i].c_str());
     }
     putchar('\n');
 
-    for (int i = 1; i < t.length(); i++) {
+    for (int i = 0; i < t.length(); i++) {
         printf("%-12f", static_cast<float>(t.data[i]));
         if (t.data[i] > max) {
             max = t.data[i];
@@ -39,7 +39,7 @@ void print_label(const Tensor<T> &t)
         max_i = Labels::no;
     }
 
-    printf("\n=> %s\n\n", labels[max_i].c_str());
+    printf("\n==========>   %s   <==========\n\n", labels[max_i].c_str());
 }
 
 #endif //__LABELS_H__

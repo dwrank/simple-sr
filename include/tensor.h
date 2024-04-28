@@ -104,8 +104,6 @@ public:
         int pos = dims[3] * (dims[2] * (dims[1] * i0 + i1) + i2) + i3;
 
         if (pos >= len) {
-            //fprintf(stderr, "Tensor: Index is out of bounds: %d. Length is %d.\n", pos, len);
-            //pos = len - 1;
             std::stringstream ss;
             ss << "Tensor: Index is out of bounds: " << pos << ". Length is " << len << ".";
             throw std::runtime_error(ss.str());
@@ -119,8 +117,6 @@ public:
         int pos = dims[3] * (dims[2] * (dims[1] * i0 + i1) + i2) + i3;
 
         if (pos >= len) {
-            //fprintf(stderr, "Tensor: Index is out of bounds: %d. Length is %d.\n", pos, len);
-            //pos = len - 1;
             std::stringstream ss;
             ss << "Tensor: Index is out of bounds: " << pos << ". Length is " << len << ".";
             throw std::runtime_error(ss.str());

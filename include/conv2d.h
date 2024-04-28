@@ -1,6 +1,7 @@
 #ifndef __CONV2D_H__
 #define __CONV2D_H__
 
+#include "utils.h"
 #include "tensor.h"
 #include "activation.h"
 
@@ -46,15 +47,14 @@ Tensor<T> conv2d(const Tensor<T> &in_t, int out_size, int kernel_size, const Ten
 
     Tensor<T> out_t(groups, out_rows, out_cols, out_channels); 
 
-#if 1
-    printf("\n[Conv2D]\n");
-    in_t.print_dims("in_t");
-    out_t.print_dims("out_t");
-    filters.print_dims("filters");
-    biases.print_dims("biases");
-#endif
+    if (Debug) {
+        printf("\n[Conv2D]\n");
+        in_t.print_dims("in_t");
+        out_t.print_dims("out_t");
+        filters.print_dims("filters");
+        biases.print_dims("biases");
+    }
 
-    bool debug = true;
     T kernel[window_row_size * window_col_size * in_t.d3()];
 
     for (int g = 0; g < groups; g++) {
@@ -84,20 +84,13 @@ Tensor<T> conv2d(const Tensor<T> &in_t, int out_size, int kernel_size, const Ten
                             int in_pos = in_t.pos(g, kr, kc, 0);
 
                             for (int in_ch = 0; in_ch < in_channels; in_ch++) {
-                                //sum += in_t(g, kr, kc, in_ch) * kernel[i++];
                                 sum += in_t.data[in_pos + in_ch] * kernel[i++];
                             }
                         }
                     }
                     
-                    /*if (debug) {
-                        printf('in shape: %s, filter: %s' % (input_window.shape, filter.shape));
-                        debug = false;
-                    }*/
-
                     // add the bias and apply the activation function (relu)
                     // to get the output channel value
-                    //out_t(g, r, c, out_ch) = relu(sum + bias);
                     out_t.data[out_pos + out_ch] = relu(sum + bias);
                 }
 	    }

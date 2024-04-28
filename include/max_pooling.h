@@ -1,6 +1,8 @@
 #ifndef __MAX_POOLING_H__
 #define __MAX_POOLING_H__
 
+#include "utils.h"
+
 // expects a 4 dimensional input (groups, rows, cols, channels)
 template<typename T>
 Tensor<T> max_pooling_2d(const Tensor<T> &in_t)
@@ -15,11 +17,11 @@ Tensor<T> max_pooling_2d(const Tensor<T> &in_t)
 
     Tensor<T> out_t(groups, out_rows, out_cols, channels); 
 
-#if 1
-    printf("\n[MaxPooling2D]\n");
-    in_t.print_dims("in_t");
-    out_t.print_dims("out_t");
-#endif
+    if (Debug) {
+        printf("\n[MaxPooling2D]\n");
+        in_t.print_dims("in_t");
+        out_t.print_dims("out_t");
+    }
 
     for (int g = 0; g < groups; g++) {
         for (int out_r = 0; out_r < out_rows; out_r++) {

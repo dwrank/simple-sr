@@ -1,6 +1,7 @@
 #ifndef __DENSE_H__
 #define __DENSE_H__
 
+#include "utils.h"
 #include "tensor.h"
 #include "activation.h"
 
@@ -16,11 +17,11 @@ Tensor<T> dense(const Tensor<T> &in_t, const Tensor<T> &weights, const Tensor<T>
     // assumes the input min is 0 (relu)
     Tensor<T> out_t(1, 1, 1, outputs); 
 
-#if 1
-    printf("\n[Dense]\n");
-    in_t.print_dims("in_t");
-    out_t.print_dims("out_t");
-#endif
+    if (Debug) {
+        printf("\n[Dense]\n");
+        in_t.print_dims("in_t");
+        out_t.print_dims("out_t");
+    }
 
     for (int out_i = 0; out_i < outputs; out_i++) {
 

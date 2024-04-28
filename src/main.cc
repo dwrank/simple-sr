@@ -19,39 +19,30 @@
 
 int main(int argc, char **argv)
 {
-    char *wav_in = nullptr, *fn_out = nullptr;
-    int c, seed = 131, max_epoch = 20, n_threads = 1, mini_size=64;
+    int c;
+    bool help = false;
 
     // parse args
-    while ((c = getopt(argc, argv, "i:o:m:h:f:d:s:t:v:")) >= 0) {
-        if (c == 'i') wav_in = optarg;
-        else if (c == 'o') fn_out = optarg;
-        else if (c == 'm') max_epoch = atoi(optarg);
-        //else if (c == 'h') n_h_fc = atoi(optarg);
-        //else if (c == 'f') n_h_flt = atoi(optarg);
-        //else if (c == 'd') dropout = atof(optarg);
-        else if (c == 's') seed = atoi(optarg);
-        else if (c == 't') n_threads = atoi(optarg);
-        //else if (c == 'v') frac_val = atof(optarg);
+    while ((c = getopt(argc, argv, "dh")) >= 0) {
+        if (c == 'd') Debug = true;
+        else if (c == 'h') help = true;
     }
 
-    if (argc - optind == 0 || (argc - optind == 1 && wav_in == 0)) {
+    if (help) {
         FILE *fp = stdout;
-        fprintf(fp, "Usage: simple-sr [-i model] [-o model] [-t nThreads] <x.knd> [y.knd]\n");
-        //return 1;
+        fprintf(fp, "Usage: simple-sr [-h] [-d]\n");
+        fprintf(fp, "   -h: help\n");
+        fprintf(fp, "   -d: debug\n");
+        return 0;
     }
 
     std::string wav_file;
-    //const char *wav_file = "../data/h_yes.wav";
-    //const char *wav_file = "/Users/drank/dev/ml/python/audio/data/mini_speech_commands/right/988e2f9a_nohash_0.wav";
-    //
-    //spectrogram_test(wav_file.c_str());
 
-    if (wav_in) {
-        wav_file = wav_in;
+    if (argc - optind == 0) {
+        wav_file = "../data/yes.wav";
     }
     else {
-        wav_file = "../data/yes.wav";
+        wav_file = argv[optind];
     }
 
     int frames;
