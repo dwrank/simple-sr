@@ -8,7 +8,7 @@
 #include "preprocess.h"
 #include "weights.h"
 #include "conv2d.h"
-//#include "maxpooling.h"
+#include "max_pooling.h"
 
 #include "signal_test.h"
 
@@ -68,39 +68,62 @@ int main(int argc, char **argv)
         print_data("Norm Spec", t_norm_spec);
 
         // Conv2D
-        Tensor<float> t_conv_kernel;
-        Tensor<float> t_conv_bias;
+        Tensor<float> t_weights_kernel;
+        Tensor<float> t_weights_bias;
 
-        t_conv_kernel.data = weights_conv2d_kernel;
-        t_conv_kernel.set_dims(weights_conv2d_kernel_d0, weights_conv2d_kernel_d1,
+        // set the weights
+        t_weights_kernel.data = weights_conv2d_kernel;
+        t_weights_kernel.set_dims(weights_conv2d_kernel_d0, weights_conv2d_kernel_d1,
                                weights_conv2d_kernel_d2, weights_conv2d_kernel_d3);
 
-        t_conv_bias.data = weights_conv2d_bias;
-        t_conv_bias.set_dims(weights_conv2d_bias_d0, weights_conv2d_bias_d1,
+        t_weights_bias.data = weights_conv2d_bias;
+        t_weights_bias.set_dims(weights_conv2d_bias_d0, weights_conv2d_bias_d1,
                              weights_conv2d_bias_d2, weights_conv2d_bias_d3);
 
         // t_norm_spec is a (1, 1, 32, 32) matrix
         // conv2d input needs it to be a (1, 32, 32, 1) matrix
         t_norm_spec.set_dims(1, 32, 32, 1);
 
-        auto t_conv = conv2d(t_norm_spec, 32, 3, t_conv_kernel, t_conv_bias);
+        auto t_conv = conv2d(t_norm_spec, 32, 3, t_weights_kernel, t_weights_bias);
         t_norm_spec.free();
         print_data("Conv2D", t_conv);
 
         // Conv2D 1
-        t_conv_kernel.data = weights_conv2d_1_kernel;
-        t_conv_kernel.set_dims(weights_conv2d_1_kernel_d0, weights_conv2d_1_kernel_d1,
+        t_weights_kernel.data = weights_conv2d_1_kernel;
+        t_weights_kernel.set_dims(weights_conv2d_1_kernel_d0, weights_conv2d_1_kernel_d1,
                                weights_conv2d_1_kernel_d2, weights_conv2d_1_kernel_d3);
 
-        t_conv_bias.data = weights_conv2d_1_bias;
-        t_conv_bias.set_dims(weights_conv2d_1_bias_d0, weights_conv2d_1_bias_d1,
+        t_weights_bias.data = weights_conv2d_1_bias;
+        t_weights_bias.set_dims(weights_conv2d_1_bias_d0, weights_conv2d_1_bias_d1,
                              weights_conv2d_1_bias_d2, weights_conv2d_1_bias_d3);
 
-        auto t_conv_1 = conv2d(t_conv, 64, 3, t_conv_kernel, t_conv_bias);
+        auto t_conv_1 = conv2d(t_conv, 64, 3, t_weights_kernel, t_weights_bias);
         t_conv.free();
         print_data("Conv2D 1", t_conv_1);
 
+        auto t_max_pool = max_pooling_2d(t_conv_1);
         t_conv_1.free();
+        print_data("MaxPooling2D", t_max_pool);
+
+        // Dense 128
+
+        // flatten the input to dense
+        t_max_pool.set_dims(1, 1, 1, t_max_pool.length());
+
+        // set the weights
+        t_weights_kernel.data = weights_dense_kernel;
+        t_weights_kernel.set_dims(weights_dense_kernel_d0, weights_dense_kernel_d1,
+                               weights_dense_kernel_d2, weights_dense_kernel_d3);
+
+        t_weights_bias.data = weights_dense_bias;
+        t_weights_bias.set_dims(weights_dense_bias_d0, weights_dense_bias_d1,
+                             weights_dense_bias_d2, weights_dense_bias_d3);
+
+        //auto t_dense = dense(t_max_pool, 128, t_weights_kernel, t_weights_bias);
+        t_max_pool.free();
+        //print_data("Dense 128", t_dense);
+
+        //t_max_pool.free();
     }
 #if 0
     // Get training data

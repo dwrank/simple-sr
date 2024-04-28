@@ -107,5 +107,4 @@ Tensor<T> conv2d(const Tensor<T> &in_t, int out_size, int kernel_size, const Ten
     return out_t;
 }
 
-
 #endif //__CONV2D_H__
