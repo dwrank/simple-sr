@@ -13,7 +13,6 @@ Tensor<T> max_pooling_2d(const Tensor<T> &in_t)
     int out_rows = in_rows / 2;
     int out_cols = in_cols / 2;
 
-    // assumes the input min is 0 (relu)
     Tensor<T> out_t(groups, out_rows, out_cols, channels); 
 
 #if 1
@@ -34,16 +33,18 @@ Tensor<T> max_pooling_2d(const Tensor<T> &in_t)
 
                 for (int ch = 0; ch < channels; ch++) {
 
-                    int out_pos = out_c_pos + ch;
+                    T max_val = in_t(g, in_r, in_c, ch);
 
                     for (int r = 0; r < 2; r++) {
                         for (int c = 0; c < 2; c++) {
                             T in_val = in_t(g, in_r + r, in_c + c, ch);
-                            if (in_val > out_t.data[out_pos]) {
-                                out_t[out_pos] = in_val;
+                            if (in_val > max_val) {
+                                max_val = in_val;
                             }
                         }
                     }
+
+                    out_t[out_c_pos + ch] = max_val;
                 }
             }
         }
