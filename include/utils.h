@@ -5,6 +5,9 @@
 
 #include "tensor.h"
 
+#define DEBUG 1
+
+#if DEBUG
 template<typename T>
 void print_data(const char *name, Tensor<T> &tensor)
 {
@@ -19,5 +22,8 @@ void print_data(const char *name, Tensor<T> &tensor)
     }
     std::cout << std::endl;
 }
+#else
+#define print_data(name, tensor)
+#endif
 
 #endif //__UTILS_H__

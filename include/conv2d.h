@@ -44,10 +44,12 @@ Tensor<T> conv2d(Tensor<T> &in_t, int out_size, int kernel_size, const Tensor<T>
 
     Tensor4f out_t(groups, out_rows, out_cols, out_channels); 
 
+#if 1
     in_t.print_dims("in_t");
     out_t.print_dims("out_t");
     filters.print_dims("filters");
     biases.print_dims("biases");
+#endif
 
     bool debug = true;
     //int n_rows = rows - window_row_size + 1;

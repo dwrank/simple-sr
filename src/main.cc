@@ -87,11 +87,20 @@ int main(int argc, char **argv)
         t_norm_spec.free();
         print_data("Conv2D", t_conv);
 
-        auto t_conv = conv2d(t_norm_spec, 32, 3, t_conv_kernel, t_conv_bias);
-        t_norm_spec.free();
-        print_data("Conv2D", t_conv);
+        // Conv2D 1
+        t_conv_kernel.data = weights_conv2d_1_kernel;
+        t_conv_kernel.set_dims(weights_conv2d_1_kernel_d0, weights_conv2d_1_kernel_d1,
+                               weights_conv2d_1_kernel_d2, weights_conv2d_1_kernel_d3);
 
+        t_conv_bias.data = weights_conv2d_1_bias;
+        t_conv_bias.set_dims(weights_conv2d_1_bias_d0, weights_conv2d_1_bias_d1,
+                             weights_conv2d_1_bias_d2, weights_conv2d_1_bias_d3);
+
+        auto t_conv_1 = conv2d(t_conv, 64, 3, t_conv_kernel, t_conv_bias);
         t_conv.free();
+        print_data("Conv2D 1", t_conv_1);
+
+        t_conv_1.free();
     }
 #if 0
     // Get training data
