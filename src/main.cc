@@ -10,31 +10,12 @@
 #include "conv2d.h"
 #include "max_pooling.h"
 #include "dense.h"
+#include "labels.h"
 
 #include "signal_test.h"
 
 #define FRAME_LEN 256
 #define FRAME_STEP 128
-
-static const std::string labels[] = {
-    "down", "go", "left", "no", "right", "stop", "up", "yes"
-};
-
-template<typename T>
-static void print_label(const Tensor<T> &t)
-{
-    T max = t.data[0];
-    int max_i = 0;
-
-    for (int i = 1; i < t.length(); i++) {
-        if (t.data[i] > max) {
-            max = t.data[i];
-            max_i = i;
-        }
-    }
-
-    printf("\nLabel: %s\n", labels[max_i].c_str());
-}
 
 int main(int argc, char **argv)
 {
