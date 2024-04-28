@@ -70,7 +70,7 @@ int main(int argc, char **argv)
         wav_file = wav_in;
     }
     else {
-        wav_file = "../data/h_yes.wav";
+        wav_file = "../data/yes.wav";
     }
 
     int frames;
