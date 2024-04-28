@@ -9,11 +9,32 @@
 #include "weights.h"
 #include "conv2d.h"
 #include "max_pooling.h"
+#include "dense.h"
 
 #include "signal_test.h"
 
 #define FRAME_LEN 256
 #define FRAME_STEP 128
+
+static const std::string labels[] = {
+    "down", "go", "left", "no", "right", "stop", "up", "yes"
+};
+
+template<typename T>
+static void print_label(const Tensor<T> &t)
+{
+    T max = t.data[0];
+    int max_i = 0;
+
+    for (int i = 1; i < t.length(); i++) {
+        if (t.data[i] > max) {
+            max = t.data[i];
+            max_i = i;
+        }
+    }
+
+    printf("\nLabel: %s\n", labels[max_i].c_str());
+}
 
 int main(int argc, char **argv)
 {
@@ -106,7 +127,6 @@ int main(int argc, char **argv)
         print_data("MaxPooling2D", t_max_pool);
 
         // Dense 128
-
         // flatten the input to dense
         t_max_pool.set_dims(1, 1, 1, t_max_pool.length());
 
@@ -119,11 +139,28 @@ int main(int argc, char **argv)
         t_weights_bias.set_dims(weights_dense_bias_d0, weights_dense_bias_d1,
                              weights_dense_bias_d2, weights_dense_bias_d3);
 
-        //auto t_dense = dense(t_max_pool, 128, t_weights_kernel, t_weights_bias);
+        auto t_dense = dense(t_max_pool, t_weights_kernel, t_weights_bias, true);
         t_max_pool.free();
-        //print_data("Dense 128", t_dense);
+        print_data("Dense 128", t_dense);
 
-        //t_max_pool.free();
+        t_max_pool.free();
+
+        // Dense 8
+        // set the weights
+        t_weights_kernel.data = weights_dense_1_kernel;
+        t_weights_kernel.set_dims(weights_dense_1_kernel_d0, weights_dense_1_kernel_d1,
+                               weights_dense_1_kernel_d2, weights_dense_1_kernel_d3);
+
+        t_weights_bias.data = weights_dense_1_bias;
+        t_weights_bias.set_dims(weights_dense_1_bias_d0, weights_dense_1_bias_d1,
+                             weights_dense_1_bias_d2, weights_dense_1_bias_d3);
+
+        auto t_labels = dense(t_dense, t_weights_kernel, t_weights_bias);
+        t_dense.free();
+        print_data("Dense 8", t_labels);
+
+        print_label(t_labels);
+        t_labels.free();
     }
 #if 0
     // Get training data
