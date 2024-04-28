@@ -38,12 +38,12 @@ static void print_label(const Tensor<T> &t)
 
 int main(int argc, char **argv)
 {
-    char *fn_in = 0, *fn_out = 0;
+    char *wav_in = nullptr, *fn_out = nullptr;
     int c, seed = 131, max_epoch = 20, n_threads = 1, mini_size=64;
 
     // parse args
     while ((c = getopt(argc, argv, "i:o:m:h:f:d:s:t:v:")) >= 0) {
-        if (c == 'i') fn_in = optarg;
+        if (c == 'i') wav_in = optarg;
         else if (c == 'o') fn_out = optarg;
         else if (c == 'm') max_epoch = atoi(optarg);
         //else if (c == 'h') n_h_fc = atoi(optarg);
@@ -54,20 +54,27 @@ int main(int argc, char **argv)
         //else if (c == 'v') frac_val = atof(optarg);
     }
 
-    if (argc - optind == 0 || (argc - optind == 1 && fn_in == 0)) {
+    if (argc - optind == 0 || (argc - optind == 1 && wav_in == 0)) {
         FILE *fp = stdout;
         fprintf(fp, "Usage: simple-sr [-i model] [-o model] [-t nThreads] <x.knd> [y.knd]\n");
         //return 1;
     }
 
-    // Spectrogram test - add an option for this
-    const char *wav_file = "../data/h_yes.wav";
+    std::string wav_file;
+    //const char *wav_file = "../data/h_yes.wav";
     //const char *wav_file = "/Users/drank/dev/ml/python/audio/data/mini_speech_commands/right/988e2f9a_nohash_0.wav";
+    //
+    //spectrogram_test(wav_file.c_str());
 
-    //spectrogram_test(wav_file);
+    if (wav_in) {
+        wav_file = wav_in;
+    }
+    else {
+        wav_file = "../data/h_yes.wav";
+    }
 
     int frames;
-    auto t_wav = read_wavfile(wav_file, frames);
+    auto t_wav = read_wavfile(wav_file.c_str(), frames);
 
     if (!t_wav.is_empty()) {
         auto t_norm = normalize_signal(t_wav.data, frames);
