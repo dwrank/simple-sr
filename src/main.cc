@@ -12,8 +12,6 @@
 #include "dense.h"
 #include "labels.h"
 
-#include "signal_test.h"
-
 #define FRAME_LEN 256
 #define FRAME_STEP 128
 

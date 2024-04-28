@@ -51,3 +51,11 @@ void spectrogram_test(const char *wav_file)
     }
 }
 
+int main(int argc, char **argv)
+{
+    const char *wavfile = "../data/yes.wav";
+
+    spectrogram_test(wavfile);
+
+    return 0;
+}
