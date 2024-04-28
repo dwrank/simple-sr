@@ -84,6 +84,11 @@ public:
         realloc(1, 1, 1, length);
     }
 
+    inline int pos(int i0, int i1, int i2, int i3) const
+    {
+        return dims[3] * (dims[2] * (dims[1] * i0 + i1) + i2) + i3;
+    }
+
     inline const T& operator()(int i0, int i1, int i2, int i3) const
     {
         // group_size = dims[1] * dims[2] * dims[3];
@@ -95,6 +100,7 @@ public:
         //       (dims[3]) * i2 + (1) * i3;
         // pos = dims[3] * (dims[2] * (dims[1] * i0 + i1) + i2) + i3;
         
+        //int pos = pos(i0, i1, i2, i3);
         int pos = dims[3] * (dims[2] * (dims[1] * i0 + i1) + i2) + i3;
 
         if (pos >= len) {
@@ -109,6 +115,7 @@ public:
 
     inline T& operator()(int i0, int i1, int i2, int i3)
     {
+        //int pos = pos(i0, i1, i2, i3);
         int pos = dims[3] * (dims[2] * (dims[1] * i0 + i1) + i2) + i3;
 
         if (pos >= len) {

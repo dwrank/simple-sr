@@ -8,6 +8,7 @@
 #include "preprocess.h"
 #include "weights.h"
 #include "conv2d.h"
+//#include "maxpooling.h"
 
 #include "signal_test.h"
 
@@ -53,7 +54,6 @@ int main(int argc, char **argv)
 
         auto t_spec = get_spectrogram(t_norm.data, frames, FRAME_LEN, FRAME_STEP);
         t_norm.free();
-
         print_data("Spec", t_spec);
 
         double mean = weights_mean;

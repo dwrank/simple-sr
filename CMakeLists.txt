@@ -4,6 +4,9 @@ project (test VERSION 0.1)
 
 set (CMAKE_CXX_STANDARD 11)
 
+# enable with: cmake .. -DCMAKE_BUILD_TYPE=Release
+set (CMAKE_CXX_FLAGS_RELEASE "-O3")
+
 find_package(SndFile REQUIRED)
 #find_package(ZLIB REQUIRED)
 
