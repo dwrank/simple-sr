@@ -9,4 +9,4 @@ else
 fi
 
 ffmpeg -y -i test.wav -ac 1 -ar 16000 test-16.wav
-../build/simple-sr test-16.wav
+simple-sr test-16.wav
