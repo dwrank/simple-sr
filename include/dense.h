@@ -9,7 +9,9 @@
 // weights is a 2 dimensional matrix (1, 1, inputs, outputs)
 // biases is a 1 dimensional matrix (1, 1, 1, outputs)
 template<typename T>
-Tensor<T> dense(const Tensor<T> &in_t, const Tensor<T> &weights, const Tensor<T> &biases, bool act=false)
+Tensor<T> dense(const Tensor<T> &in_t,
+                const Tensor<T> &weights, const Tensor<T> &biases,
+                std::function<float(float)> activation=nullptr)
 {
     int inputs = in_t.length();
     int outputs = weights.d3();
@@ -32,8 +34,8 @@ Tensor<T> dense(const Tensor<T> &in_t, const Tensor<T> &weights, const Tensor<T>
         }
 
         sum += biases.data[out_i];
-        if (act) {
-            out_t[out_i] = relu(sum);
+        if (activation) {
+            out_t[out_i] = activation(sum);
         }
         else {
             out_t[out_i] = sum;

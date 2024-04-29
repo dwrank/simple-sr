@@ -1,9 +1,10 @@
 #ifndef __CONV2D_H__
 #define __CONV2D_H__
 
+#include <functional>
+
 #include "utils.h"
 #include "tensor.h"
-#include "activation.h"
 
 // filters is a 4-D matrix (kernel_rows, kernel_cols, in_channels, out_channels)
 // Fill the kernel matrix with the out channel weight from each
@@ -25,7 +26,9 @@ static void fill_kernel(T *kernel, const Tensor<T> &filters, int out_ch)
 // and filters (kernel_rows, kernel_cols, in_channels, out_channels)
 // biases is a 1 dimensional vector matching the number of channels or is empty
 template<typename T>
-Tensor<T> conv2d(const Tensor<T> &in_t, int out_size, int kernel_size, const Tensor<T> &filters, const Tensor<T> &biases)
+Tensor<T> conv2d(const Tensor<T> &in_t, int out_size, int kernel_size,
+                 const Tensor<T> &filters, const Tensor<T> &biases,
+                 std::function<float(float)> activation=nullptr)
 {
     // the edges are not padded, so only points that the filters can cover are included
     int window_row_size = filters.d0();
@@ -91,7 +94,13 @@ Tensor<T> conv2d(const Tensor<T> &in_t, int out_size, int kernel_size, const Ten
                     
                     // add the bias and apply the activation function (relu)
                     // to get the output channel value
-                    out_t.data[out_pos + out_ch] = relu(sum + bias);
+                    if (activation) {
+                        out_t.data[out_pos + out_ch] =
+                            static_cast<T>(activation(static_cast<T>(sum + bias)));
+                    }
+                    else {
+                        out_t.data[out_pos + out_ch] = sum + bias;
+                    }
                 }
 	    }
 	}
