@@ -7,9 +7,8 @@ set (CMAKE_CXX_STANDARD 11)
 # enable with: cmake .. -DCMAKE_BUILD_TYPE=Release
 set (CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-find_package(SndFile REQUIRED)
-
 find_package(PkgConfig  REQUIRED)
+pkg_search_module(SNDFILE REQUIRED sndfile IMPORTED_TARGET)
 pkg_search_module(FFTW REQUIRED fftw3 IMPORTED_TARGET)
 
 include_directories (
@@ -30,7 +29,7 @@ target_compile_options (simple-sr PRIVATE
 )
 
 target_link_libraries (simple-sr PRIVATE
-    SndFile::sndfile
+    PkgConfig::SNDFILE
     PkgConfig::FFTW
 )
 
