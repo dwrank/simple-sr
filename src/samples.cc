@@ -2,6 +2,7 @@
 #include <sstream>
 #include <algorithm>
 #include <random>
+#include <string.h>
 
 #include "samples.h"
 #include "signal.h"
