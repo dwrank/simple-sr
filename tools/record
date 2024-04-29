@@ -1,4 +1,12 @@
 #!/bin/bash
-sox -r 16k -b 16 -c 1 -d test.wav trim 0 1
+
+which arecord &> /dev/null
+
+if [[ $? -eq 0 ]]; then
+    arecord -d 1 test.wav
+else
+    sox -r 16k -b 16 -c 1 -d test.wav trim 0 1
+fi
+
 ffmpeg -y -i test.wav -ac 1 -ar 16000 test-16.wav
 ../build/simple-sr test-16.wav
