@@ -21,14 +21,17 @@ The model weights are taken from the trained TensorFlow model and generated into
 ### 2. Run the input through the model
 1. The first Conv2D layer takes the 32x32x1 image and produces a 30x30x32 output matrix, using a 3x3 kernel with 32 output channels.
    The image is reduced to 30x30.  The input matrix is not zero padded while applying the 3x3 kernel, so no calculations are made for the border values.
+   ReLU is applied as the activation function.
 2. The second Conv2D layer takes the 30x30x32 input and applies a 3x3 kernel to each of the 32 channels and produces 64 output channels of 28x28 matrices.
+   ReLU is applied as the activation function.
 3. The MaxPooling2D layer slides a 2x2 window across each channel's matrix and selects the max value, thus reducing the output to 64 channels of 14x14 matrices.
 4. There is a dropout layer in the TensorFlow model, but it is only applied for training, so it is not implemented here.
 5. The resulting matrix is then 'flattened' as input to the next layer.
 6. The dense layer is a fully connected network layer of the linear form: Y = W * X + b.
    It takes a 12544 sized vector and applies it to 128 output units to get a 128 sized vector.
-7. There is another dropout layer, which is ignored.
-8. The final layer is another dense layer, which has 8 outputs for the labels: 'down', 'go', 'left', 'no', 'right', 'stop', 'up', 'yes'.
+   This is a hidden unit layer with a ReLU activation function.
+8. There is another dropout layer, which is ignored.
+9. The final layer is the output dense layer, which has 8 outputs for the labels: 'down', 'go', 'left', 'no', 'right', 'stop', 'up', 'yes'.
 
 ### 3. Post processing
 'go' may often have a better prediction value for 'no' and 'down' inputs, but the inverse is not the same, so 'no' or 'down' may be selected instead of 'go'
