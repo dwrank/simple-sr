@@ -31,12 +31,16 @@ void print_label(const Tensor<T> &t)
     }
     putchar('\n');
 
-    // The prediction for 'no' is close to 'go',
-    // but the prediction for 'go' is not so close to 'no,
-    // so select 'no' if it is close to 'go'.
-    if (max_i == Labels::go &&
-            std::abs(t.data[Labels::go] - t.data[Labels::no]) < 2) {
-        max_i = Labels::no;
+    // The prediction for 'no' and 'down' is close to 'go',
+    // but the prediction for 'go' is not so close to 'no' and 'down',
+    // so select 'no' or 'down' if either is close to 'go'.
+    if (max_i == Labels::go) {
+        if (std::abs(t.data[Labels::go] - t.data[Labels::no]) < 2) {
+            max_i = Labels::no;
+        }
+        else if (std::abs(t.data[Labels::go] - t.data[Labels::down]) < 2) {
+            max_i = Labels::down;
+        }
     }
 
     printf("\n==========>   %s   <==========\n\n", labels[max_i].c_str());
