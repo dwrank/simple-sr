@@ -33,6 +33,10 @@ target_link_libraries (simple-sr PRIVATE
     PkgConfig::FFTW
 )
 
+install (TARGETS simple-sr
+    RUNTIME DESTINATION bin
+)
+
 if(TESTS)
     add_subdirectory(test)
 endif()

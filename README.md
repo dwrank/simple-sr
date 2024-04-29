@@ -6,7 +6,8 @@ This application takes a wav file as input and outputs prediction values for eac
 
 The application is the feed forward portion of the TensorFlow model in C++11.
 The motivation for this project is to be able to run a simple voice recognition model on older platforms that
-do not support versions greater than C++11.  The implementation is simplified and not meant as a general purpose model framework.
+do not support C++ versions greater than C++11.  The implementation is simplified and not meant as a general
+purpose model framework.
 
 The model weights are taken from the trained TensorFlow model and generated into C arrays.
 
