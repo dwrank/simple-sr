@@ -3,10 +3,10 @@
 which arecord &> /dev/null
 
 if [[ $? -eq 0 ]]; then
-    arecord -d 1 test.wav
+    arecord -d 1 -r 16000 -f S16_LE test-16.wav
 else
     sox -r 16k -b 16 -c 1 -d test.wav trim 0 1
+    ffmpeg -y -i test.wav -ac 1 -ar 16000 test-16.wav
 fi
 
-ffmpeg -y -i test.wav -ac 1 -ar 16000 test-16.wav
 simple-sr test-16.wav
