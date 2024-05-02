@@ -26,7 +26,7 @@ static void fill_kernel(T *kernel, const Tensor<T> &filters, int out_ch)
 // and filters (kernel_rows, kernel_cols, in_channels, out_channels)
 // biases is a 1 dimensional vector matching the number of channels or is empty
 template<typename T>
-Tensor<T> conv2d(const Tensor<T> &in_t, int out_size, int kernel_size,
+Tensor<T> conv2d(const Tensor<T> &in_t,
                  const Tensor<T> &filters, const Tensor<T> &biases,
                  std::function<float(float)> activation=nullptr)
 {

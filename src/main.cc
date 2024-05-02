@@ -27,22 +27,19 @@ int main(int argc, char **argv)
         else if (c == 'h') help = true;
     }
 
+    if (argc - optind == 0) {
+        help = true;
+    }
+
     if (help) {
         FILE *fp = stdout;
-        fprintf(fp, "Usage: simple-sr [-h] [-d]\n");
+        fprintf(fp, "Usage: simple-sr [-h] [-d] <wav file>\n");
         fprintf(fp, "   -h: help\n");
         fprintf(fp, "   -d: debug\n");
         return 0;
     }
 
-    std::string wav_file;
-
-    if (argc - optind == 0) {
-        wav_file = "../data/yes.wav";
-    }
-    else {
-        wav_file = argv[optind];
-    }
+    std::string wav_file = argv[optind];
 
     int frames;
     auto t_wav = read_wavfile(wav_file.c_str(), frames);
@@ -58,7 +55,7 @@ int main(int argc, char **argv)
         double mean = weights_mean;
         double std = std::sqrt(weights_variance);
 
-        auto resized_spec = resize_tensor2(t_spec, 32, 32);
+        auto resized_spec = resize_tensor2(t_spec, 64, 64);
         t_spec.free();
         print_data("Resize Spec", resized_spec);
 
@@ -79,15 +76,19 @@ int main(int argc, char **argv)
         t_weights_bias.set_dims(weights_conv2d_bias_d0, weights_conv2d_bias_d1,
                                 weights_conv2d_bias_d2, weights_conv2d_bias_d3);
 
-        // t_norm_spec is a (1, 1, 32, 32) matrix
-        // conv2d input needs it to be a (1, 32, 32, 1) matrix
-        t_norm_spec.set_dims(1, 32, 32, 1);
+        // t_norm_spec is a (1, 1, 64, 64) matrix
+        // conv2d input needs it to be a (1, 64, 64, 1) matrix
+        t_norm_spec.set_dims(1, 64, 64, 1);
 
-        auto t_conv = conv2d(t_norm_spec, 32, 3, t_weights_kernel, t_weights_bias, relu<float>);
+        auto t_conv = conv2d(t_norm_spec, t_weights_kernel, t_weights_bias, relu<float>);
         t_norm_spec.free();
         print_data("Conv2D", t_conv);
 
-        // Conv2D 1
+        auto t_max_pool = max_pooling_2d(t_conv);
+        t_conv.free();
+        print_data("MaxPooling2D", t_max_pool);
+
+        // Conv2D V1
         t_weights_kernel.data = weights_conv2d_1_kernel;
         t_weights_kernel.set_dims(weights_conv2d_1_kernel_d0, weights_conv2d_1_kernel_d1,
                                   weights_conv2d_1_kernel_d2, weights_conv2d_1_kernel_d3);
@@ -96,17 +97,34 @@ int main(int argc, char **argv)
         t_weights_bias.set_dims(weights_conv2d_1_bias_d0, weights_conv2d_1_bias_d1,
                                 weights_conv2d_1_bias_d2, weights_conv2d_1_bias_d3);
 
-        auto t_conv_1 = conv2d(t_conv, 64, 3, t_weights_kernel, t_weights_bias, relu<float>);
-        t_conv.free();
+        auto t_conv_1 = conv2d(t_max_pool, t_weights_kernel, t_weights_bias, relu<float>);
+        t_max_pool.free();
         print_data("Conv2D 1", t_conv_1);
 
-        auto t_max_pool = max_pooling_2d(t_conv_1);
+        auto t_max_pool_1 = max_pooling_2d(t_conv_1);
         t_conv_1.free();
-        print_data("MaxPooling2D", t_max_pool);
+        print_data("MaxPooling2D", t_max_pool_1);
+
+        // Conv2D V2
+        t_weights_kernel.data = weights_conv2d_2_kernel;
+        t_weights_kernel.set_dims(weights_conv2d_2_kernel_d0, weights_conv2d_2_kernel_d1,
+                                  weights_conv2d_2_kernel_d2, weights_conv2d_2_kernel_d3);
+
+        t_weights_bias.data = weights_conv2d_2_bias;
+        t_weights_bias.set_dims(weights_conv2d_2_bias_d0, weights_conv2d_2_bias_d1,
+                                weights_conv2d_2_bias_d2, weights_conv2d_2_bias_d3);
+
+        auto t_conv_2 = conv2d(t_max_pool_1, t_weights_kernel, t_weights_bias, relu<float>);
+        t_max_pool_1.free();
+        print_data("Conv2D 2", t_conv_2);
+
+        auto t_max_pool_2 = max_pooling_2d(t_conv_2);
+        t_conv_2.free();
+        print_data("MaxPooling2D", t_max_pool_2);
 
         // Dense 128
         // flatten the input to dense
-        t_max_pool.set_dims(1, 1, 1, t_max_pool.length());
+        t_max_pool.set_dims(1, 1, 1, t_max_pool_2.length());
 
         // set the weights
         t_weights_kernel.data = weights_dense_kernel;
@@ -117,8 +135,8 @@ int main(int argc, char **argv)
         t_weights_bias.set_dims(weights_dense_bias_d0, weights_dense_bias_d1,
                                 weights_dense_bias_d2, weights_dense_bias_d3);
 
-        auto t_dense = dense(t_max_pool, t_weights_kernel, t_weights_bias, relu<float>);
-        t_max_pool.free();
+        auto t_dense = dense(t_max_pool_2, t_weights_kernel, t_weights_bias, relu<float>);
+        t_max_pool_2.free();
         print_data("Dense 128", t_dense);
 
         t_max_pool.free();
