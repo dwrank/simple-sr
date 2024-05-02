@@ -1,6 +1,15 @@
 #ifndef __LABELS_H__
 #define __LABELS_H__
 
+#include <vector>
+
+template<typename T>
+struct LabelValue
+{
+    std::string label;
+    T value;
+};
+
 enum Labels {
     down, go, left, no, right, stop, up, yes
 };
@@ -12,38 +21,30 @@ const std::string labels[] = {
 template<typename T>
 void print_label(const Tensor<T> &t)
 {
-    T max = t.data[0];
-    int max_i = 0;
+    std::vector<LabelValue<T>> lvs;
 
     printf("\n[Prediction]\n");
 
     for (int i = 0; i < t.length(); i++) {
-        printf("%-12s", labels[i].c_str());
+        lvs.push_back(LabelValue<T> { labels[i], t.data[i] });
+    }
+
+    std::sort(lvs.begin(), lvs.end(),
+            [](const LabelValue<T> &lv1, const LabelValue<T> &lv2) {
+                return lv1.value > lv2.value;
+            });
+
+    for (const auto &lv : lvs) {
+        printf("%-12s", lv.label.c_str());
     }
     putchar('\n');
 
-    for (int i = 0; i < t.length(); i++) {
-        printf("%-12f", static_cast<float>(t.data[i]));
-        if (t.data[i] > max) {
-            max = t.data[i];
-            max_i = i;
-        }
+    for (const auto &lv : lvs) {
+        printf("%-12f", static_cast<float>(lv.value));
     }
     putchar('\n');
 
-    // The prediction for 'no' and 'down' is close to 'go',
-    // but the prediction for 'go' is not so close to 'no' and 'down',
-    // so select 'no' or 'down' if either is close to 'go'.
-    if (max_i == Labels::go) {
-        if (std::abs(t.data[Labels::go] - t.data[Labels::no]) < 2) {
-            max_i = Labels::no;
-        }
-        else if (std::abs(t.data[Labels::go] - t.data[Labels::down]) < 2) {
-            max_i = Labels::down;
-        }
-    }
-
-    printf("\n==========>   %s   <==========\n\n", labels[max_i].c_str());
+    printf("\n==========>   %s   <==========\n\n", lvs[0].label.c_str());
 }
 
 #endif //__LABELS_H__

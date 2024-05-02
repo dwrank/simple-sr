@@ -34,10 +34,6 @@ The model weights are taken from the trained TensorFlow model and generated into
 8. There is another dropout layer, which is ignored.
 9. The final layer is the output dense layer, which has 8 outputs for the labels: 'down', 'go', 'left', 'no', 'right', 'stop', 'up', 'yes'.
 
-### 3. Post processing
-'go' may often have a better prediction value for 'no' and 'down' inputs, but the inverse is not the same, so 'no' or 'down' may be selected instead of 'go'
-if either is close enough to 'go'.
-
 ## References
 Conv2D
 - fast.ai has a really good explanation of the Conv2D and MaxPooling2D layers: https://course.fast.ai/Lessons/lesson8.html
@@ -95,8 +91,8 @@ With no arguments, the model will run on ../data/yes.wav
 $ ./simple-sr
 
 [Prediction]
-down        go          left        no          right       stop        up          yes
--3.174652   -3.007938   1.979785    -1.735928   -4.648821   -1.321403   -4.770293   6.679570
+yes         left        up          go          stop        no          right       down
+3.502766    0.538052    -0.505377   -0.683521   -0.904043   -1.528566   -2.755372   -3.094836
 
 ==========>   yes   <==========
 ```
@@ -106,10 +102,10 @@ To input a wav file:
 $ ../build/simple-sr test-16.wav
 
 [Prediction]
-down        go          left        no          right       stop        up          yes
-6.893702    7.134671    -8.687324   3.409425    -7.497922   -1.306404   -4.478090   -5.634733
+go          no          down        stop        up          left        yes         right
+1.286628    1.226844    0.704659    -0.365673   -1.032117   -1.678373   -2.012884   -2.128404
 
-==========>   down   <==========
+==========>   go   <==========
 ```
 
 The tools directory has a script that will record a 1 second audio sample, down sample it to 16KHz, and run the model on it:
@@ -132,8 +128,8 @@ Output #0, wav, to 'test-16.wav':
         encoder         : Lavc61.3.100 pcm_s16le
 ...
 [Prediction]
-down        go          left        no          right       stop        up          yes
--5.282815   -1.309025   2.154530    -6.874960   10.475742   -5.820977   1.990969    -4.639996
+right       go          up          left        down        stop        no          yes
+2.545856    1.049048    0.566780    -0.340170   -0.791220   -1.468079   -1.997716   -2.915035
 
 ==========>   right   <==========
 ```
