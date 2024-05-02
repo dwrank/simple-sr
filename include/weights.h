@@ -41,12 +41,28 @@ const int weights_conv2d_1_bias_d3 = 64;
 const int weights_conv2d_1_bias_len = 64;
 extern float weights_conv2d_1_bias[weights_conv2d_1_bias_len];
 
-// dimensions: (12544, 128)
+// dimensions: (3, 3, 64, 128)
+const int weights_conv2d_2_kernel_d0 = 3;
+const int weights_conv2d_2_kernel_d1 = 3;
+const int weights_conv2d_2_kernel_d2 = 64;
+const int weights_conv2d_2_kernel_d3 = 128;
+const int weights_conv2d_2_kernel_len = 73728;
+extern float weights_conv2d_2_kernel[weights_conv2d_2_kernel_len];
+
+// dimensions: (128,)
+const int weights_conv2d_2_bias_d0 = 1;
+const int weights_conv2d_2_bias_d1 = 1;
+const int weights_conv2d_2_bias_d2 = 1;
+const int weights_conv2d_2_bias_d3 = 128;
+const int weights_conv2d_2_bias_len = 128;
+extern float weights_conv2d_2_bias[weights_conv2d_2_bias_len];
+
+// dimensions: (4608, 128)
 const int weights_dense_kernel_d0 = 1;
 const int weights_dense_kernel_d1 = 1;
-const int weights_dense_kernel_d2 = 12544;
+const int weights_dense_kernel_d2 = 4608;
 const int weights_dense_kernel_d3 = 128;
-const int weights_dense_kernel_len = 1605632;
+const int weights_dense_kernel_len = 589824;
 extern float weights_dense_kernel[weights_dense_kernel_len];
 
 // dimensions: (128,)
