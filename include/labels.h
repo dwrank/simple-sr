@@ -11,11 +11,19 @@ struct LabelValue
 };
 
 enum Labels {
-    down, go, left, no, right, stop, up, yes
+    down, eight, five, four,
+    go, left, nine, no,
+    one, right, seven, six,
+    stop, three, two, up,
+    yes, zero
 };
 
 const std::string labels[] = {
-    "down", "go", "left", "no", "right", "stop", "up", "yes"
+    "down", "eight", "five", "four",
+    "go", "left", "nine", "no",
+    "one", "right", "seven", "six",
+    "stop", "three", "two", "up",
+    "yes", "zero"
 };
 
 template<typename T>

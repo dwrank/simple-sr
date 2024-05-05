@@ -73,20 +73,20 @@ const int weights_dense_bias_d3 = 128;
 const int weights_dense_bias_len = 128;
 extern float weights_dense_bias[weights_dense_bias_len];
 
-// dimensions: (128, 8)
+// dimensions: (128, 18)
 const int weights_dense_1_kernel_d0 = 1;
 const int weights_dense_1_kernel_d1 = 1;
 const int weights_dense_1_kernel_d2 = 128;
-const int weights_dense_1_kernel_d3 = 8;
-const int weights_dense_1_kernel_len = 1024;
+const int weights_dense_1_kernel_d3 = 18;
+const int weights_dense_1_kernel_len = 2304;
 extern float weights_dense_1_kernel[weights_dense_1_kernel_len];
 
-// dimensions: (8,)
+// dimensions: (18,)
 const int weights_dense_1_bias_d0 = 1;
 const int weights_dense_1_bias_d1 = 1;
 const int weights_dense_1_bias_d2 = 1;
-const int weights_dense_1_bias_d3 = 8;
-const int weights_dense_1_bias_len = 8;
+const int weights_dense_1_bias_d3 = 18;
+const int weights_dense_1_bias_len = 18;
 extern float weights_dense_1_bias[weights_dense_1_bias_len];
 
 #endif  // __WEIGHTS_H__
