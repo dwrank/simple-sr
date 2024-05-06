@@ -6,6 +6,7 @@
 #include "tensor.h"
 
 extern bool Debug;
+extern bool Verbose;
 
 template<typename T>
 void print_data(const char *name, Tensor<T> &tensor)

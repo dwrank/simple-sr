@@ -47,6 +47,7 @@ Conv2D
 ## Model and layer examinations and implementations in python using jupyter-lab
 Training:
 - https://github.com/dwrank/ml-notebooks/blob/master/audio/simple-sr/simple_sr_train_v2.ipynb
+- https://github.com/dwrank/ml-notebooks/blob/master/audio/simple-sr/simple_sr_train_v2_with_numbers.ipynb
 
 Overview of the layers and their output dimensions:
 - https://github.com/dwrank/ml-notebooks/blob/master/audio/simple-sr/simple_sr_layers_v2.ipynb
@@ -92,7 +93,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Release -DTESTS=ON
 
 ## Running
 ```
-$ ../build/simple-sr test-16.wav
+$ ../build/simple-sr -v test-16.wav
 
 [Prediction]
 go          no          down        stop        up          left        yes         right
@@ -125,4 +126,25 @@ right       go          up          left        down        stop        no      
 2.545856    1.049048    0.566780    -0.340170   -0.791220   -1.468079   -1.997716   -2.915035
 
 ==========>   right   <==========
+```
+
+tools/detect.py will trigger on a certain amplitude and record the captured audio to a wav file.
+It will then run the prediction on the wav file.  detect.py requires pyaudio, and was tested with
+pyaudio 0.2.14.  At least version 0.2.12 is recommended which provides a bug fix for python 3.8.
+
+This example runs detect.py for 10 seconds as I spoke the numbers 1 through 9, and 0.
+```
+$ python detect.py 10
+Capturing for 10 seconds.
+.......^^^^^^^^ one
+......^^^^^^^^ two
+......^^^^^^^^ three
+......^^^^^^^^ four
+.......^^^^^^^^ five
+.......^^^^^^^^ six
+.......^^^^^^^^ seven
+.......^^^^^^^^ eight
+.......^^^^^^^^ nine
+........^^^^^^^^ zero
+..Stopping
 ```

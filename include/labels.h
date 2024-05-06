@@ -2,6 +2,7 @@
 #define __LABELS_H__
 
 #include <vector>
+#include "utils.h"
 
 template<typename T>
 struct LabelValue
@@ -31,8 +32,6 @@ void print_label(const Tensor<T> &t)
 {
     std::vector<LabelValue<T>> lvs;
 
-    printf("\n[Prediction]\n");
-
     for (int i = 0; i < t.length(); i++) {
         lvs.push_back(LabelValue<T> { labels[i], t.data[i] });
     }
@@ -42,17 +41,24 @@ void print_label(const Tensor<T> &t)
                 return lv1.value > lv2.value;
             });
 
-    for (const auto &lv : lvs) {
-        printf("%-12s", lv.label.c_str());
-    }
-    putchar('\n');
+    if (Verbose) {
+        printf("\n[Prediction]\n");
 
-    for (const auto &lv : lvs) {
-        printf("%-12f", static_cast<float>(lv.value));
-    }
-    putchar('\n');
+        for (const auto &lv : lvs) {
+            printf("%-12s", lv.label.c_str());
+        }
+        putchar('\n');
 
-    printf("\n==========>   %s   <==========\n\n", lvs[0].label.c_str());
+        for (const auto &lv : lvs) {
+            printf("%-12f", static_cast<float>(lv.value));
+        }
+        putchar('\n');
+
+        printf("\n==========>   %s   <==========\n\n", lvs[0].label.c_str());
+    }
+    else {
+        printf("%s\n", lvs[0].label.c_str());
+    }
 }
 
 #endif //__LABELS_H__
