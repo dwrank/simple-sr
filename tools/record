@@ -9,4 +9,4 @@ else
     ffmpeg -y -i test.wav -ac 1 -ar 16000 test-16.wav
 fi
 
-simple-sr test-16.wav
+simple-sr -v test-16.wav
