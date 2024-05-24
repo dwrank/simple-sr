@@ -25,12 +25,18 @@ Tensor<T> dense(const Tensor<T> &in_t,
         out_t.print_dims("out_t");
     }
 
+    // optimize: pre-calculate weight row positions
+    int w_row_pos[inputs];
+    for (int in_i = 0; in_i < inputs; in_i++) {
+        w_row_pos[in_i] = weights.pos(0, 0, in_i, 0);
+    }
+
     for (int out_i = 0; out_i < outputs; out_i++) {
 
         T sum = 0;
 
         for (int in_i = 0; in_i < inputs; in_i++) {
-            sum += in_t.data[in_i] * weights(in_i, out_i);
+            sum += in_t.data[in_i] * weights.data[w_row_pos[in_i] + out_i];
         }
 
         sum += biases.data[out_i];
