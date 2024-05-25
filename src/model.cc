@@ -1,4 +1,5 @@
 
+#include <cstring>
 #include "model.h"
 
 #define FRAME_LEN 256
@@ -9,6 +10,23 @@ Tensor4f predict_wavfile(const char *wavfile)
     int frames;
     auto t_wav = read_wavfile(wavfile, frames);
     return predict_wav(t_wav, frames);
+}
+
+extern "C" int predict_wav(short *wav, int frames, float *res)
+{
+    Tensor1s tensor;
+    tensor.alloc(frames);
+    memcpy(tensor.data, wav, frames * sizeof(short));
+
+    auto pred = predict_wav(tensor, frames);
+
+    if (res) {
+        memcpy(res, pred.data, pred.length() * sizeof(float));
+    }
+
+    pred.free();
+
+    return 0;
 }
 
 Tensor4f predict_wav(Tensor1s &t_wav, int frames)

@@ -20,10 +20,10 @@ enum Labels {
 };
 
 const std::string labels[] = {
-    "down", "eight", "five", "four",
-    "go", "left", "nine", "no",
-    "one", "right", "seven", "six",
-    "stop", "three", "two", "up",
+    "eight", "five", "four",
+    "nine", "no",
+    "one", "seven", "six",
+    "three", "two", 
     "yes", "zero"
 };
 

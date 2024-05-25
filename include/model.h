@@ -12,6 +12,8 @@
 
 Tensor4f predict_wavfile(const char *wavfile);
 
+extern "C" int predict_wav(short *wav, int frames, float *res);
+
 Tensor4f predict_wav(Tensor1s &wav, int frames);
 
 #endif //__MODEL_H__
